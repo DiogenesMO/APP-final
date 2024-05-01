@@ -1,0 +1,13 @@
+import { useState } from 'react';
+
+const useVisibility = (initialVisibility: boolean = false) => {
+    const [isVisible, setIsVisible] = useState(initialVisibility);
+
+    const toggleVisibility = () => {
+        setIsVisible(!isVisible);
+    };
+
+    return [isVisible, toggleVisibility] as const;
+};
+
+export default useVisibility;
