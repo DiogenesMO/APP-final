@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Image, Text, StyleSheet, TextInput, Button, TouchableOpacity } from 'react-native';
+import { View, Image, Text, StyleSheet, TextInput, Button, TouchableOpacity, ScrollView, Linking } from 'react-native';
 import LinkButton from './LinkButton';
 
 interface ProfileCardProps {
@@ -22,6 +22,17 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profilePicture, userName, add
             setNewLinkUrl('');
             setShowForm(false);
         }
+        console.log([...links, { name: newLinkName, url: newLinkUrl }]);
+    };
+
+    const handleCancel = () => {
+        setNewLinkName('');
+        setNewLinkUrl('');
+        setShowForm(false);
+    };
+
+    const handleLinkPress = (url: string) => {
+        Linking.openURL(url);
     };
 
     return (
@@ -37,33 +48,40 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profilePicture, userName, add
                             style={styles.input}
                             value={newLinkName}
                             onChangeText={setNewLinkName}
-                            placeholder="Link Name"
+                            placeholder="Nombre del enlace"
                             placeholderTextColor="#fff"
                         />
                         <TextInput
                             style={styles.input}
                             value={newLinkUrl}
                             onChangeText={setNewLinkUrl}
-                            placeholder="Link URL"
+                            placeholder="URL del enlace"
                             placeholderTextColor="#fff"
                         />
-                        <Button title="Save Link" onPress={handleAddLink} color="#00FF00" />
+                        <View style={styles.buttonContainer}>
+                            <Button title="Cancelar" onPress={handleCancel} color='#dc3545' />
+                            <View style={{ width: 10 }}></View>
+                            <Button title="Guardar" onPress={handleAddLink} color='#28a745' />
+                        </View>
                     </View>
                 )}
-                <View style={styles.buttonContainer}>
-                    <LinkButton text="GitHub" onPress={() => { }} />
-                    <LinkButton text="Frontend Mentor" onPress={() => { }} />
-                    <LinkButton text="LinkedIn" onPress={() => { }} />
-                    <LinkButton text="Twitter" onPress={() => { }} />
-                    {links.map((link, index) => (
-                        <LinkButton key={index} text={link.name} onPress={() => { }} />
-                    ))}
-                </View>
+                <ScrollView style={styles.scrollView}>
+                    <View style={styles.buttonContainer}>
+                        <LinkButton text="GitHub" url="https://github.com/" />
+                        <LinkButton text="Frontend Mentor" url="https://www.frontendmentor.io/" />
+                        <LinkButton text="LinkedIn" url="https://www.linkedin.com/" />
+                        <LinkButton text="Twitter" url="https://twitter.com/" />
+                        {links.map((link, index) => (
+                            <LinkButton key={index} text={link.name} url={link.url} />
+                        ))}
+                    </View>
+                </ScrollView>
+
                 <TouchableOpacity
                     style={styles.addButton}
                     onPress={() => setShowForm(!showForm)}
                 >
-                    <Text style={[styles.addButtonLabel, { color: '#fff' }]}>+ Add Link</Text>
+                    <Text style={[styles.addButtonLabel, { color: '#fff' }]}>+ New Link</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -71,6 +89,12 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profilePicture, userName, add
 };
 
 const styles = StyleSheet.create({
+    container: {
+        flexGrow: 1,
+        backgroundColor: '#000',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     card: {
         backgroundColor: '#000',
         borderRadius: 10,
@@ -117,12 +141,18 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginBottom: 10,
     },
+
+    scrollView: {
+        maxHeight: 300,
+    },
+
     addButton: {
-        backgroundColor: '#00FF00',
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: 5,
-        marginBottom: 10,
+        backgroundColor: '#28a745',
+        padding: 15,
+        borderRadius: 12,
+        width: 300,
+        marginTop: 10,
+        alignItems: 'center',
     },
     addButtonLabel: {
         fontSize: 16,
