@@ -1,14 +1,18 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, Linking } from 'react-native';
 
 interface LinkButtonProps {
     text: string;
-    onPress: () => void;
+    url: string;
 }
 
-const LinkButton: React.FC<LinkButtonProps> = ({ text, onPress }) => {
+const LinkButton: React.FC<LinkButtonProps> = ({ text, url }) => {
+    const handlePress = () => {
+        Linking.openURL(url);
+    };
+
     return (
-        <TouchableOpacity style={styles.linkButton} onPress={onPress}>
+        <TouchableOpacity style={styles.linkButton} onPress={handlePress}>
             <Text style={styles.buttonText}>{text}</Text>
         </TouchableOpacity>
     );
