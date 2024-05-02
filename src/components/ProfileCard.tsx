@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Image, Text, StyleSheet, TextInput, Button, TouchableOpacity, ScrollView, Linking } from 'react-native';
 import LinkButton from './LinkButton';
 
@@ -22,6 +22,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profilePicture, userName, add
             setNewLinkUrl('');
             setShowForm(false);
         }
+
         console.log([...links, { name: newLinkName, url: newLinkUrl }]);
     };
 
@@ -31,9 +32,9 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profilePicture, userName, add
         setShowForm(false);
     };
 
-    const handleLinkPress = (url: string) => {
-        Linking.openURL(url);
-    };
+    // const handleLinkPress = (url: string) => {
+    //     Linking.openURL(url);
+    // };
 
     return (
         <View style={styles.card}>
