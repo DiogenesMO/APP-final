@@ -5,7 +5,6 @@ app.use(express.json());
 
 const data: Array<{}> = [
 
-
     {
         id: "1",
         profilePicture:
@@ -16,6 +15,8 @@ const data: Array<{}> = [
     },
 ];
 
+console.log(data);
+
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 app.get('/', async (req, res) => {
@@ -24,14 +25,13 @@ app.get('/', async (req, res) => {
 });
 
 app.post('/posts', (req, res) => {
-    const { profilePicture = "", profileName = "" } = req.body;
+    const { links = "" } = req.body;
 
-    console.log('saving new data: ', { profilePicture, profileName });
+    console.log('saving new data: ', { links });
 
     data.push({
         id: data.length.toString(),
-        profilePicture,
-        profileName,
+        links,
     });
 
     res.json(data);
@@ -40,3 +40,4 @@ app.post('/posts', (req, res) => {
 app.listen(3001, () => {
     console.log('Server is running on port 3001');
 });
+
