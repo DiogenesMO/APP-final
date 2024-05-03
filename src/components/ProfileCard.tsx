@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Image, Text, StyleSheet, TextInput, Button, TouchableOpacity, ScrollView, Linking } from 'react-native';
-import LinkButton from './LinkButton';
+import React, { useState } from 'react';
+import { View, Image, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Linking } from 'react-native';
 
 interface ProfileCardProps {
     profilePicture: string;
@@ -15,15 +14,44 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profilePicture, userName, add
     const [newLinkUrl, setNewLinkUrl] = useState('');
     const [showForm, setShowForm] = useState(false);
 
-    const handleAddLink = () => {
+    const initialLinks = [
+        { name: "GitHub", url: "https://github.com/" },
+        { name: "Frontend Mentor", url: "https://www.frontendmentor.io/" },
+        { name: "LinkedIn", url: "https://www.linkedin.com/" },
+        { name: "Twitter", url: "https://twitter.com/" }
+    ];
+
+    const handleAddLink = async () => {
         if (newLinkName.trim() !== '' && newLinkUrl.trim() !== '') {
-            setLinks([...links, { name: newLinkName, url: newLinkUrl }]);
+            const newItem = { name: newLinkName, url: newLinkUrl };
+            setLinks([...links, newItem]);
             setNewLinkName('');
             setNewLinkUrl('');
             setShowForm(false);
-        }
 
-        console.log([...links, { name: newLinkName, url: newLinkUrl }]);
+            // Incluye toda la información requerida del formulario
+            const profileData = {
+                links: [newItem]
+            };
+
+            // Lógica para guardar los datos en el servidor
+            try {
+                const response = await fetch("http://192.168.1.8:3001/posts", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(profileData)
+                });
+                const data = await response.json();
+                console.log("Data saved successfully:", data);
+            } catch (error) {
+                console.error("Error saving data:", error);
+            }
+
+            console.log([...links, newItem]);
+
+        }
     };
 
     const handleCancel = () => {
@@ -32,9 +60,9 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profilePicture, userName, add
         setShowForm(false);
     };
 
-    // const handleLinkPress = (url: string) => {
-    //     Linking.openURL(url);
-    // };
+    const handleAddLinkButtonPress = () => {
+        setShowForm(true);
+    };
 
     return (
         <View style={styles.card}>
@@ -60,27 +88,32 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profilePicture, userName, add
                             placeholderTextColor="#fff"
                         />
                         <View style={styles.buttonContainer}>
-                            <Button title="Cancelar" onPress={handleCancel} color='#dc3545' />
-                            <View style={{ width: 10 }}></View>
-                            <Button title="Guardar" onPress={handleAddLink} color='#28a745' />
+                            <TouchableOpacity onPress={handleCancel}>
+                                <Text style={[styles.button, { backgroundColor: '#dc3545' }]}>Cancelar</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={handleAddLink}>
+                                <Text style={[styles.button, { backgroundColor: '#28a745' }]}>Guardar</Text>
+                            </TouchableOpacity>
                         </View>
                     </View>
                 )}
                 <ScrollView style={styles.scrollView}>
-                    <View style={styles.buttonContainer}>
-                        <LinkButton text="GitHub" url="https://github.com/" />
-                        <LinkButton text="Frontend Mentor" url="https://www.frontendmentor.io/" />
-                        <LinkButton text="LinkedIn" url="https://www.linkedin.com/" />
-                        <LinkButton text="Twitter" url="https://twitter.com/" />
+                    <View style={styles.linkContainer}>
+                        {initialLinks.map((link, index) => (
+                            <TouchableOpacity key={index} onPress={() => Linking.openURL(link.url)}>
+                                <Text style={styles.link}>{link.name}</Text>
+                            </TouchableOpacity>
+                        ))}
                         {links.map((link, index) => (
-                            <LinkButton key={index} text={link.name} url={link.url} />
+                            <TouchableOpacity key={index} onPress={() => Linking.openURL(link.url)}>
+                                <Text style={styles.link}>{link.name}</Text>
+                            </TouchableOpacity>
                         ))}
                     </View>
                 </ScrollView>
-
                 <TouchableOpacity
                     style={styles.addButton}
-                    onPress={() => setShowForm(!showForm)}
+                    onPress={handleAddLinkButtonPress}
                 >
                     <Text style={[styles.addButtonLabel, { color: '#fff' }]}>+ New Link</Text>
                 </TouchableOpacity>
@@ -90,12 +123,6 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profilePicture, userName, add
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flexGrow: 1,
-        backgroundColor: '#000',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
     card: {
         backgroundColor: '#000',
         borderRadius: 10,
@@ -136,17 +163,39 @@ const styles = StyleSheet.create({
         color: '#ccc',
         marginBottom: 20,
     },
+    linkContainer: {
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        marginBottom: 10,
+    },
+    link: {
+        padding: 13,
+        marginBottom: 4,
+        backgroundColor: '#007bff',
+        color: '#fff',
+        borderRadius: 12,
+        width: 300,
+        textAlign: 'center',
+        marginTop: 10,
+        fontSize: 16,
+        fontWeight: 'bold'
+    },
     buttonContainer: {
         flexDirection: 'row',
-        flexWrap: 'wrap',
         justifyContent: 'center',
         marginBottom: 10,
     },
-
+    button: {
+        padding: 10,
+        borderRadius: 5,
+        color: '#fff',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginHorizontal: 5,
+    },
     scrollView: {
         maxHeight: 300,
     },
-
     addButton: {
         backgroundColor: '#28a745',
         padding: 15,
@@ -156,7 +205,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     addButtonLabel: {
-        fontSize: 16,
+        fontSize: 20,
         fontWeight: 'bold',
     },
     formContainer: {
@@ -173,3 +222,5 @@ const styles = StyleSheet.create({
 });
 
 export default ProfileCard;
+
+
