@@ -14,13 +14,6 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profilePicture, userName, add
     const [newLinkUrl, setNewLinkUrl] = useState('');
     const [showForm, setShowForm] = useState(false);
 
-    const initialLinks = [
-        { name: "GitHub", url: "https://github.com/" },
-        { name: "Frontend Mentor", url: "https://www.frontendmentor.io/" },
-        { name: "LinkedIn", url: "https://www.linkedin.com/" },
-        { name: "Twitter", url: "https://twitter.com/" }
-    ];
-
     const handleAddLink = async () => {
         if (newLinkName.trim() !== '' && newLinkUrl.trim() !== '') {
             const newItem = { name: newLinkName, url: newLinkUrl };
@@ -36,7 +29,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profilePicture, userName, add
 
             // Lógica para guardar los datos en el servidor
             try {
-                const response = await fetch("http://192.168.1.8:3001/posts", {
+                const response = await fetch("http://192.168.170.43:3001/posts", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -92,24 +85,24 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profilePicture, userName, add
                                 <Text style={[styles.button, { backgroundColor: '#dc3545' }]}>Cancelar</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={handleAddLink}>
-                                <Text style={[styles.button, { backgroundColor: '#28a745' }]}>Guardar</Text>
+                                <Text style={[styles.button, {
+                                    backgroundColor: '#6D4AA9'
+
+                                }]}>Guardar</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
                 )}
                 <ScrollView style={styles.scrollView}>
+
                     <View style={styles.linkContainer}>
-                        {initialLinks.map((link, index) => (
-                            <TouchableOpacity key={index} onPress={() => Linking.openURL(link.url)}>
-                                <Text style={styles.link}>{link.name}</Text>
-                            </TouchableOpacity>
-                        ))}
                         {links.map((link, index) => (
                             <TouchableOpacity key={index} onPress={() => Linking.openURL(link.url)}>
                                 <Text style={styles.link}>{link.name}</Text>
                             </TouchableOpacity>
                         ))}
                     </View>
+
                 </ScrollView>
                 <TouchableOpacity
                     style={styles.addButton}
@@ -124,10 +117,9 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profilePicture, userName, add
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: '#000',
+        backgroundColor: '#1F1F1F',
         borderRadius: 10,
         padding: 20,
-        shadowColor: '#ccc',
         shadowOffset: {
             width: 0,
             height: 2,
@@ -171,7 +163,7 @@ const styles = StyleSheet.create({
     link: {
         padding: 13,
         marginBottom: 4,
-        backgroundColor: '#007bff',
+        backgroundColor: '#333333',
         color: '#fff',
         borderRadius: 12,
         width: 300,
@@ -186,18 +178,21 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     button: {
-        padding: 10,
+        padding: 13,
         borderRadius: 5,
         color: '#fff',
         fontWeight: 'bold',
         textAlign: 'center',
         marginHorizontal: 5,
+        marginTop: 10,
+        width: 140,
+
     },
     scrollView: {
         maxHeight: 300,
     },
     addButton: {
-        backgroundColor: '#28a745',
+        backgroundColor: '#6D4AA9',
         padding: 15,
         borderRadius: 12,
         width: 300,
@@ -212,12 +207,16 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     input: {
-        height: 40,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        marginBottom: 10,
-        paddingHorizontal: 10,
+        padding: 13,
+        marginBottom: 4,
+        backgroundColor: '#333333',
         color: '#fff',
+        borderRadius: 12,
+        width: 300,
+        textAlign: 'center',
+        marginTop: 10,
+        fontSize: 16,
+        fontWeight: 'bold'
     },
 });
 
